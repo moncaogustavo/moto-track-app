@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, ScrollView, Text } from "react-native";
+import { View, ScrollView, Text, TouchableOpacity, Alert } from "react-native";
 import { useTheme } from "~/src/context/ThemeContext";
 import { MenuItem, menuItems } from "~/types/MenuItems";
-import { useRouter } from "expo-router";
-
 import MenuLateral from "~/src/components/MenuLateral";
 import HeaderSobre from "~/src/components/sobre/HeaderSobre";
-import MembroCard from "~/src/components/sobre/MembroCard";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-export default function Sobre() {
+import Constants from "expo-constants"; 
+
+export default function SobreApp() {
   const { colors } = useTheme();
   const [menuAberto, setMenuAberto] = useState(false);
   const [logado, setLogado] = useState(false);
-  
+  const [commitHash, setCommitHash] = useState<string | null>(null);
 
   const filteredMenuItems: MenuItem[] = menuItems.filter((item) => {
     if (item.onlyLoggedIn && !logado) return false;
@@ -26,36 +25,11 @@ export default function Sobre() {
       setLogado(!!user);
     };
     checkUser();
-  }, []);
 
-  const membros = [
-    {
-      nome: "Eric Yoshida",
-      funcao: "Desenvolvedor Back-End",
-      rm: "558763",
-      imagem: require("../assets/eric.jpg"),
-      github: "https://github.com/Yoshida672",
-      linkedin: "https://www.linkedin.com/in/yoshida672/",
-    },
-    {
-      nome: "Gustavo Matias",
-      funcao: "Engenheiro de Dados",
-      rm: "555010",
-      imagem: require("../assets/gustavo-matias.jpg"),
-      github: "https://github.com/Gustavo295",
-      linkedin:
-        "https://www.linkedin.com/in/gustavo-matias-teixeira-2b89a7266/",
-    },
-    {
-      nome: "Gustavo Monção",
-      funcao: "Web Designer",
-      rm: "557515",
-      imagem: require("../assets/gustavo-moncao.jpg"),
-      github: "https://github.com/moncaogustavo",
-      linkedin: "https://www.linkedin.com/in/gustavo-monção-574a38224/",
-    },
-    
-  ];
+const commitHash = Constants.expoConfig?.extra?.commitHash || "não disponível";
+
+    setCommitHash(commitHash);
+  }, []);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -67,24 +41,43 @@ export default function Sobre() {
       />
 
       <ScrollView
-        contentContainerStyle={{ alignItems: "center", paddingVertical: 20 }}
+        contentContainerStyle={{ alignItems: "center", paddingVertical: 40 }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            gap: 20,
-          }}
-        >
-          {membros.map((membro, index) => (
-            <MembroCard key={index} membro={membro} index={index} />
-          ))}
-        </View>
+        <Text style={{ fontWeight: "bold", fontSize: 22, color: colors.text }}>
+          Sobre o App
+        </Text>
 
         <Text
           style={{
             marginTop: 20,
+            fontSize: 16,
+            textAlign: "center",
+            color: colors.text,
+          }}
+        >
+          Moto Track é um aplicativo de autodiagnóstico de motos, permitindo o
+          gerenciamento de motos, filtragem por filial e notificações em tempo real.
+        </Text>
+
+        <View
+          style={{
+            marginTop: 30,
+            padding: 16,
+            backgroundColor: "#f2f2f2",
+            borderRadius: 10,
+            width: "80%",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ fontWeight: "bold", color: "#333" }}>Hash do Commit:</Text>
+          <Text style={{ marginTop: 8, color: "#555", fontSize: 14 }}>
+            {commitHash}
+          </Text>
+        </View>
+
+        <Text
+          style={{
+            marginTop: 40,
             fontWeight: "600",
             fontSize: 12,
             color: colors.text,
